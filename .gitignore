@@ -66,3 +66,6 @@ jspm_packages/
 
 .dev.vars
 .wrangler/
+
+# VS Code
+.vscode/
