@@ -5,6 +5,7 @@ import json
 @dataclass
 class Insights:
     user: str
+    psycho_hazard: bool
 
     def serialize(self):
         return json.dumps(self.__dict__)
@@ -16,7 +17,8 @@ class InsightsDB:
     def get(self, user: str) -> Insights:
         insights = json.loads(self.db.get(user))
         return Insights(
-            user=insights.get("user")
+            user=insights.get("user"),
+            psycho_hazard=insights.get("psycho_hazard")
         )
 
     def put(self, insights: Insights) -> None:
