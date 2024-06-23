@@ -7,11 +7,10 @@ from insights import InsightsDB
 
 async def on_fetch(request, env) -> Response:
     community_id = parse_qs(urlparse(request.url).query).get("id")[0]
-    if not await auth(
+    auth_status = await auth(
         env.BACKEND_URL, request.headers.get("Authorization"), community_id
-    ):
-        return Response.new(
-            HTTPStatus.UNAUTHORIZED.description, status=HTTPStatus.UNAUTHORIZED.value
-        )
+    )
+    if auth_status.is_success is False:
+        return Response.new(auth_status.description, status=auth_status.value)
     insights_db = InsightsDB(env.insightsdb)
     return Response.new("Hello World!")
