@@ -3,7 +3,9 @@ from js import fetch
 from pyodide.ffi import to_js
 
 
-async def auth(base_url: str, authorization: str, community_id: str) -> HTTPStatus:
+async def community_auth(
+    base_url: str, authorization: str, community_id: str
+) -> HTTPStatus:
     response = await fetch(
         f"{base_url}/community?id={community_id}",
         method="HEAD",
