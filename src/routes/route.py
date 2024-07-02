@@ -9,11 +9,14 @@ class Route(ABC):
     def __init__(self, path: list[str]) -> None:
         self.path = path
 
-    def matches(self, request) -> bool:
+    def matches(self, url: str) -> bool:
         url_path = list(
-            filter(lambda slice: slice != "", urlparse(request.url).path.split("/"))
+            filter(lambda slice: slice != "", urlparse(url).path.split("/"))
         )
         return url_path == self.path
+
+    def context(self, db=None) -> None:
+        self.insightsdb = db
 
     @abstractmethod
     async def auth(self, request, env) -> bool:

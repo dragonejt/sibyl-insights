@@ -67,6 +67,7 @@ binding = "AI"
 [[kv_namespaces]]
 binding = "insightsdb"
 id = "4d84153e0c70416fa3fba17879b64374"
+preview_id = "ce8991776e60403c9d90ce0520973949"
 
 # Bind an mTLS certificate. Use to present a client certificate when communicating with another service.
 # Docs: https://developers.cloudflare.com/workers/wrangler/configuration/#mtls-certificates

@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime, timezone
+from insightsdb import InsightsDB
 from js import Response
 from http import HTTPStatus, HTTPMethod
 
@@ -23,7 +24,7 @@ async def on_fetch(request, env) -> Response:
     routes = [Root([]), Community(["community"])]
 
     for route in routes:
-        if route.matches(request) is False:
+        if route.matches(request.url) is False:
             log.debug("Route %s does not match request", route.__class__.__name__)
             continue
 
@@ -33,6 +34,7 @@ async def on_fetch(request, env) -> Response:
                 HTTPStatus.UNAUTHORIZED.description, status=HTTPStatus.UNAUTHORIZED
             )
 
+        env.insights = InsightsDB(env.insightsdb)
         log.info("Request routed to %s %s", request.method, route.__class__.__name__)
         match request.method:
             case HTTPMethod.GET:
