@@ -1,9 +1,10 @@
 import logging
 from datetime import datetime, timezone
-from insightsdb import InsightsDB
-from js import Response
 from http import HTTPStatus, HTTPMethod
+from urllib.parse import urlparse
+from js import Response
 
+from insightsdb import InsightsDB
 from clients.auth import Auth
 from routes.root import Root
 from routes.community import Community
@@ -18,7 +19,7 @@ async def on_fetch(request, env) -> Response:
         "[%s] %s %s",
         datetime.now(timezone.utc).isoformat(),
         request.method,
-        request.url,
+        f"{urlparse(request.url).path}?{urlparse(request.url).query}",
     )
 
     routes = [Root([]), Community(["community"])]
@@ -34,7 +35,7 @@ async def on_fetch(request, env) -> Response:
                 HTTPStatus.UNAUTHORIZED.description, status=HTTPStatus.UNAUTHORIZED
             )
 
-        env.insights = InsightsDB(env.insightsdb)
+        route.insightsdb = InsightsDB(env.insightsdb)
         log.info("Request routed to %s %s", request.method, route.__class__.__name__)
         match request.method:
             case HTTPMethod.GET:

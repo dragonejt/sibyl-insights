@@ -17,7 +17,7 @@ class Community(Route):
     @override
     async def get(self, request, env) -> Response:
         community_id = parse_qs(urlparse(request.url).query).get("id")[0]
-        community_insights = await env.insights.get_community(community_id)
+        community_insights = await self.insightsdb.get_community(community_id)
         return Response.new(community_insights.serialize(), status=HTTPStatus.OK)
 
     @override
@@ -25,8 +25,8 @@ class Community(Route):
         request_body = (await request.json()).to_py()
         community_insights = CommunityInsights.deserialize(request_body)
         community_id = community_insights.community
-        await env.insights.put_community(community_id, community_insights)
+        await self.insightsdb.put_community(community_id, community_insights)
         return Response.new(
-            (await env.insights.get_community(community_id)).serialize(),
+            (await self.insightsdb.get_community(community_id)).serialize(),
             status=HTTPStatus.CREATED,
         )

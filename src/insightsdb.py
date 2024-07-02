@@ -1,12 +1,13 @@
 from abc import ABC, abstractmethod
 from typing import override
 from dataclasses import dataclass
-import json
+from json import dumps as to_json
 
 
 class Insights(ABC):
+
     def serialize(self) -> str:
-        return json.dumps(self.__dict__)
+        return to_json(self.__dict__)
 
     @staticmethod
     @abstractmethod
@@ -21,9 +22,9 @@ class UserInsights(Insights):
 
     @staticmethod
     @override
-    def deserialize(insights: dict) -> "UserInsights":
+    def deserialize(user_insights: dict) -> "UserInsights":
         return UserInsights(
-            user=insights["user"], psycho_hazard=insights["psycho_hazard"]
+            user=user_insights["user"], psycho_hazard=user_insights["psycho_hazard"]
         )
 
 
@@ -33,24 +34,27 @@ class CommunityInsights(Insights):
 
     @staticmethod
     @override
-    def deserialize(insights: dict) -> "CommunityInsights":
-        return CommunityInsights(community=insights["community"])
+    def deserialize(community_insights: dict) -> "CommunityInsights":
+        return CommunityInsights(community=community_insights["community"])
 
 
 class InsightsDB:
+
     def __init__(self, insightsdb) -> None:
         self.db = insightsdb
 
-    async def get_user(self, user: str) -> UserInsights:
-        insights = json.loads(await self.db.get(user))
+    async def get_user(self, user_id: str) -> UserInsights:
+        insights = json.loads(await self.db.get(user_id))
         return UserInsights.deserialize(insights)
 
-    async def put_user(self, user: str, insights: UserInsights) -> None:
-        await self.db.put(user, insights.serialize())
+    async def put_user(self, user_id: str, user_insights: UserInsights) -> None:
+        await self.db.put(user_id, user_insights.serialize())
 
-    async def get_community(self, community: str) -> CommunityInsights:
-        insights = json.loads(await self.db.get(community))
+    async def get_community(self, community_id: str) -> CommunityInsights:
+        insights = json.loads(await self.db.get(community_id))
         return CommunityInsights.deserialize(insights)
 
-    async def put_community(self, community: str, insights: CommunityInsights) -> None:
-        await self.db.put(community, insights.serialize())
+    async def put_community(
+        self, community_id: str, community_insights: CommunityInsights
+    ) -> None:
+        await self.db.put(community_id, community_insights.serialize())
