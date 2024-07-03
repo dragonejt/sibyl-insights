@@ -3,8 +3,12 @@ from http import HTTPStatus
 from urllib.parse import urlparse
 from js import Response
 
+from insightsdb import InsightsDB
+
 
 class Route(ABC):
+
+    insightsdb: InsightsDB
 
     def __init__(self, path: list[str]) -> None:
         self.path = path
@@ -15,7 +19,7 @@ class Route(ABC):
         )
         return url_path == self.path
 
-    def context(self, db=None) -> None:
+    def context(self, db: InsightsDB) -> None:
         self.insightsdb = db
 
     @abstractmethod
@@ -30,7 +34,9 @@ class Route(ABC):
 
     async def head(self, request, env) -> Response:
         get_response = await self.get(request, env)
-        return Response.new(None, status=get_response.status, headers=get_response.headers)
+        return Response.new(
+            None, status=get_response.status, headers=get_response.headers
+        )
 
     async def post(self, request, env) -> Response:
         return Response.new(

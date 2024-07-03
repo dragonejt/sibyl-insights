@@ -17,25 +17,25 @@ class Insights(ABC):
 
 @dataclass
 class UserInsights(Insights):
-    user: str
+    user_id: str
     psycho_hazard: bool
 
     @staticmethod
     @override
-    def deserialize(user_insights: dict) -> "UserInsights":
+    def deserialize(insights: dict) -> "UserInsights":
         return UserInsights(
-            user=user_insights["user"], psycho_hazard=user_insights["psycho_hazard"]
+            user_id=insights["user_id"], psycho_hazard=insights["psycho_hazard"]
         )
 
 
 @dataclass
 class CommunityInsights(Insights):
-    community: str
+    community_id: str
 
     @staticmethod
     @override
-    def deserialize(community_insights: dict) -> "CommunityInsights":
-        return CommunityInsights(community=community_insights["community"])
+    def deserialize(insights: dict) -> "CommunityInsights":
+        return CommunityInsights(community_id=insights["community_id"])
 
 
 class InsightsDB:
@@ -50,6 +50,9 @@ class InsightsDB:
     async def put_user(self, user_id: str, user_insights: UserInsights) -> None:
         await self.db.put(user_id, user_insights.serialize())
 
+    async def delete_user(self, user_id: str) -> None:
+        await self.db.delete(user_id)
+
     async def get_community(self, community_id: str) -> CommunityInsights:
         insights = from_json(await self.db.get(community_id))
         return CommunityInsights.deserialize(insights)
@@ -58,3 +61,6 @@ class InsightsDB:
         self, community_id: str, community_insights: CommunityInsights
     ) -> None:
         await self.db.put(community_id, community_insights.serialize())
+
+    async def delete_community(self, community_id: str) -> None:
+        await self.db.delete(community_id)

@@ -1,4 +1,4 @@
-import logging
+from logging import getLogger, INFO, StreamHandler
 from datetime import datetime, timezone
 from http import HTTPStatus, HTTPMethod
 from urllib.parse import urlparse
@@ -8,12 +8,13 @@ from insightsdb import InsightsDB
 from clients.auth import Auth
 from routes.root import Root
 from routes.community import Community
+from routes.user import User
 
 
 async def on_fetch(request, env) -> Response:
-    log = logging.getLogger(__name__)
-    log.setLevel(logging.INFO)
-    log.addHandler(logging.StreamHandler())
+    log = getLogger(__name__)
+    log.setLevel(INFO)
+    log.addHandler(StreamHandler())
 
     log.info(
         "[%s] %s %s",
@@ -22,7 +23,7 @@ async def on_fetch(request, env) -> Response:
         f"{urlparse(request.url).path}?{urlparse(request.url).query}",
     )
 
-    routes = [Root([]), Community(["community"])]
+    routes = [Root([]), Community(["community"]), User(["user"])]
 
     for route in routes:
         if route.matches(request.url) is False:
@@ -35,7 +36,7 @@ async def on_fetch(request, env) -> Response:
                 HTTPStatus.UNAUTHORIZED.description, status=HTTPStatus.UNAUTHORIZED
             )
 
-        route.insightsdb = InsightsDB(env.insightsdb)
+        route.context(db=InsightsDB(env.insightsdb))
         log.info("Request routed to %s %s", request.method, route.__class__.__name__)
         match request.method:
             case HTTPMethod.GET:

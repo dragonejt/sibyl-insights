@@ -24,9 +24,15 @@ class Community(Route):
     async def post(self, request, env) -> Response:
         request_body = (await request.json()).to_py()
         community_insights = CommunityInsights.deserialize(request_body)
-        community_id = community_insights.community
+        community_id = community_insights.community_id
         await self.insightsdb.put_community(community_id, community_insights)
         return Response.new(
             (await self.insightsdb.get_community(community_id)).serialize(),
             status=HTTPStatus.CREATED,
         )
+
+    @override
+    async def delete(self, request, env) -> Response:
+        community_id = parse_qs(urlparse(request.url).query).get("id")[0]
+        await self.insightsdb.delete_community(community_id)
+        return Response.new(None, status=HTTPStatus.NO_CONTENT)
