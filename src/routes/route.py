@@ -30,7 +30,7 @@ class Route(ABC):
 
     async def head(self, request, env) -> Response:
         get_response = await self.get(request, env)
-        return Response.new(None, status=get_response.status)
+        return Response.new(None, status=get_response.status, headers=get_response.headers)
 
     async def post(self, request, env) -> Response:
         return Response.new(

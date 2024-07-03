@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import override
 from dataclasses import dataclass
-from json import dumps as to_json
+from json import dumps as to_json, loads as from_json
 
 
 class Insights(ABC):
@@ -44,14 +44,14 @@ class InsightsDB:
         self.db = insightsdb
 
     async def get_user(self, user_id: str) -> UserInsights:
-        insights = json.loads(await self.db.get(user_id))
+        insights = from_json(await self.db.get(user_id))
         return UserInsights.deserialize(insights)
 
     async def put_user(self, user_id: str, user_insights: UserInsights) -> None:
         await self.db.put(user_id, user_insights.serialize())
 
     async def get_community(self, community_id: str) -> CommunityInsights:
-        insights = json.loads(await self.db.get(community_id))
+        insights = from_json(await self.db.get(community_id))
         return CommunityInsights.deserialize(insights)
 
     async def put_community(
