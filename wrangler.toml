@@ -22,7 +22,7 @@ binding = "AI"
 
 # Bind an Analytics Engine dataset. Use Analytics Engine to write analytics within your Pages Function.
 # Docs: https://developers.cloudflare.com/workers/wrangler/configuration/#analytics-engine-datasets
-# [[analytics_engine_datasets]]
+[[analytics_engine_datasets]]
 binding = "ANALYTICS"
 dataset = "sibyl-insights-analytics"
 
@@ -66,7 +66,7 @@ dataset = "sibyl-insights-analytics"
 # Bind a KV Namespace. Use KV as persistent storage for small key-value pairs.
 # Docs: https://developers.cloudflare.com/workers/wrangler/configuration/#kv-namespaces
 [[kv_namespaces]]
-binding = "insightsdb"
+binding = "INSIGHTSDB"
 id = "4d84153e0c70416fa3fba17879b64374"
 preview_id = "ce8991776e60403c9d90ce0520973949"
 

@@ -36,7 +36,7 @@ async def on_fetch(request, env) -> Response:
                 HTTPStatus.UNAUTHORIZED.description, status=HTTPStatus.UNAUTHORIZED
             )
 
-        route.context(db=InsightsDB(env.insightsdb))
+        route.context(db=InsightsDB(env.INSIGHTSDB))
         log.info("Request routed to %s %s", request.method, route.__class__.__name__)
         match request.method:
             case HTTPMethod.GET:
