@@ -1,5 +1,5 @@
 from logging import getLogger, INFO, StreamHandler
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from http import HTTPStatus, HTTPMethod
 from urllib.parse import urlparse
 from js import Response
@@ -18,7 +18,7 @@ async def on_fetch(request, env) -> Response:
 
     log.info(
         "[%s] %s %s",
-        datetime.now(timezone.utc).isoformat(),
+        datetime.now(UTC).isoformat(),
         request.method,
         f"{urlparse(request.url).path}?{urlparse(request.url).query}",
     )
